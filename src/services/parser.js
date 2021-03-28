@@ -1,4 +1,4 @@
-const csvFilePath='../data/data_clean.csv'
+const csvFilePath='../data/data_rollingWindow.csv'
 const csv=require('csvtojson')
 const fs=require('fs')
 
@@ -7,7 +7,7 @@ async function parse() {
         .fromFile(csvFilePath)
         .then((jsonObj)=>{
             let data = JSON.stringify(jsonObj);
-            fs.writeFileSync('../data/data_clean.json', data);
+            fs.writeFileSync('../data/data_rollingWindow.json', data);
         })    
 }
 

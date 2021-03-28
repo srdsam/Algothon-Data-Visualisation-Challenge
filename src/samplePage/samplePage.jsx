@@ -6,17 +6,17 @@ import { Container, Row, Col } from 'react-bootstrap'
 // import { VictoryChart, VictoryLine, VictoryTheme } from 'victory';
 
 import { data_clean } from '../data/data_clean'
-
-function isNumeric(n) { 
-	return !isNaN(parseFloat(n)) && isFinite(n);
-}
+import { data_interpolate } from '../data/data_interpolate'
+import { data_rollingWindow } from '../data/data_rollingWindow'
 
 class SamplePage extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            data: []
+            dataOrig: [],
+            dataInterpolate: [],
+            dataRW: []
         };
     }
 
@@ -29,14 +29,30 @@ class SamplePage extends React.Component {
                 }
         })
 
+        var parsedDataInterpolate = data_interpolate.map(function(obj, ind) {
+            return {
+                "idx": ind,
+                "Interpolated Data": Number(obj[Object.keys(obj)[0]])
+                }
+        })
+
+        var parsedDataRW = data_rollingWindow.map(function(obj, ind) {
+            return {
+                "idx": ind,
+                "Interpolated and Rolling Window Data": Number(obj[Object.keys(obj)[0]])
+                }
+        })
+
         this.setState({ 
-            data: parsedData
+            dataOrig: parsedData,
+            dataInterpolate: parsedDataInterpolate.slice(0,200),
+            dataRW: parsedDataRW.slice(0,200)
         });
     }
 
 
     render() {
-        const { data } = this.state;
+        const { dataOrig, dataInterpolate, dataRW } = this.state;
 
         return (
 
@@ -47,7 +63,7 @@ class SamplePage extends React.Component {
                 <Container>
                     <Row className="justify-content-md-center">
                         <ResponsiveContainer width='100%' height={400}>
-                            <LineChart data={data}
+                            <LineChart data={dataOrig}
                             margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis dataKey="idx" label={{ value: 'Index', position: 'bottom', offset: 0}}/>
@@ -60,11 +76,31 @@ class SamplePage extends React.Component {
                     </Row>
                     <Row>
                         <Col>
-                        lalal
+                        <ResponsiveContainer width='100%' height={400}>
+                            <LineChart data={dataInterpolate}
+                            margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="idx" label={{ value: 'Index', position: 'bottom', offset: 0}}/>
+                                <YAxis/>                        
+                                <Tooltip />
+                                <Legend verticalAlign="top" height={36}/>
+                                <Line type="monotone" dataKey="Interpolated Data" stroke="#8884d8" dot={false}/>
+                            </LineChart>
+                        </ ResponsiveContainer>
                         </Col>
                         
                         <Col>
-                        lalal
+                        <ResponsiveContainer width='100%' height={400}>
+                            <LineChart data={dataRW}
+                            margin={{ top: 20, right: 20, left: 20, bottom: 20 }}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="idx" label={{ value: 'Index', position: 'bottom', offset: 0}}/>
+                                <YAxis/>                        
+                                <Tooltip />
+                                <Legend verticalAlign="top" height={36}/>
+                                <Line type="monotone" dataKey="Interpolated and Rolling Window Data" stroke="#8884d8" dot={false}/>
+                            </LineChart>
+                        </ ResponsiveContainer>
                         </Col>
                     </Row>
                 </Container>
